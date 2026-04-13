@@ -26,24 +26,22 @@ const client = new Client({
 });
 
 // ---------------- SETTINGS ----------------
-const WEBHOOK_URL = https://discord.com/api/webhooks/1493016172520804362/wpwS7KQhrhQYJfsH4dPRwjPQi6l6rnlPbQckMrPZUKn9Ogau06JriociHte_CCqqn7iK;
+const WEBHOOK_URL = process.env.WEBHOOK_URL;
+
 const ROLE_ID = "1490119562853617795";
 const FORCES_CHANNEL_ID = "1490116444296314991";
 
-// 🖼 IMAGE
 const IMAGE_URL =
   "https://th.bing.com/th/id/OIP.1vPuKW06mnXzD7W--g2bVwHaHa?w=185&h=185&c=7&r=0&o=5&pid=1.7";
 
 // ---------------- READY ----------------
 client.once('ready', () => {
-  console.log(`Logged in as ${client.user.tag}`);
+  console.log(`✅ Logged in as ${client.user.tag}`);
 });
 
 // ---------------- MEMBER JOIN ----------------
 client.on('guildMemberAdd', async (member) => {
   try {
-    console.log("MEMBER JOINED");
-
     await axios.post(WEBHOOK_URL, {
       username: "Anarchy Command",
       embeds: [
@@ -51,15 +49,12 @@ client.on('guildMemberAdd', async (member) => {
           title: "🟢 RECRUIT ENLISTED",
           description:
             "**NEW ENLISTMENT CONFIRMED**\n\n" +
-            "👤 **Soldier:** <@" + member.id + ">\n" +
-            "📥 **Status:** Active Recruit\n\n" +
-            "📍 **Assignment:** Awaiting verification in <#" + FORCES_CHANNEL_ID + ">\n\n" +
+            "👤 Soldier: <@" + member.id + ">\n" +
+            "📥 Status: Active Recruit\n\n" +
+            "📍 Assignment: <#" + FORCES_CHANNEL_ID + ">\n\n" +
             "**Welcome to the ranks. Discipline is strength.**",
           color: 0x57f287,
-
-          image: {
-            url: IMAGE_URL
-          }
+          image: { url: IMAGE_URL }
         }
       ]
     });
@@ -69,16 +64,14 @@ client.on('guildMemberAdd', async (member) => {
   }
 });
 
-// ---------------- ROLE CHANGE ----------------
+// ---------------- ROLE UPDATE ----------------
 client.on('guildMemberUpdate', async (oldMember, newMember) => {
   try {
     const hadRole = oldMember.roles.cache.has(ROLE_ID);
     const hasRole = newMember.roles.cache.has(ROLE_ID);
 
-    // 🟢 ROLE ADDED
+    // ROLE ADDED
     if (!hadRole && hasRole) {
-      console.log("RECRUIT ENLISTED");
-
       await axios.post(WEBHOOK_URL, {
         username: "Anarchy Command",
         embeds: [
@@ -86,24 +79,19 @@ client.on('guildMemberUpdate', async (oldMember, newMember) => {
             title: "🟢 RECRUIT ENLISTED",
             description:
               "**NEW ENLISTMENT CONFIRMED**\n\n" +
-              "👤 **Soldier:** <@" + newMember.id + ">\n" +
-              "📥 **Status:** Active Recruit\n\n" +
-              "📍 **Assignment:** Awaiting verification in <#" + FORCES_CHANNEL_ID + ">\n\n" +
+              "👤 Soldier: <@" + newMember.id + ">\n" +
+              "📥 Status: Active Recruit\n\n" +
+              "📍 Assignment: <#" + FORCES_CHANNEL_ID + ">\n\n" +
               "**Welcome to the ranks. Discipline is strength.**",
             color: 0x57f287,
-
-            image: {
-              url: IMAGE_URL
-            }
+            image: { url: IMAGE_URL }
           }
         ]
       });
     }
 
-    // 🔴 ROLE REMOVED
+    // ROLE REMOVED
     if (hadRole && !hasRole) {
-      console.log("RECRUIT DISCHARGED");
-
       await axios.post(WEBHOOK_URL, {
         username: "Anarchy Command",
         embeds: [
@@ -111,14 +99,11 @@ client.on('guildMemberUpdate', async (oldMember, newMember) => {
             title: `${newMember.user.username} - DISCHARGED`,
             description:
               "**PERSONNEL STATUS UPDATE**\n\n" +
-              "👤 **Soldier:** <@" + newMember.id + ">\n" +
-              "📤 **Status:** Removed from active service\n\n" +
+              "👤 Soldier: <@" + newMember.id + ">\n" +
+              "📤 Status: Removed from active service\n\n" +
               "**The unit continues forward.**",
             color: 0xed4245,
-
-            image: {
-              url: IMAGE_URL
-            }
+            image: { url: IMAGE_URL }
           }
         ]
       });
