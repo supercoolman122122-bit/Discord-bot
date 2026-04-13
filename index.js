@@ -29,49 +29,25 @@ const client = new Client({
 const WEBHOOK_URL = process.env.WEBHOOK_URL;
 
 const ROLE_ID = "1490119562853617795";
-const FORCES_CHANNEL_ID = "1490116444296314991";
 
 const IMAGE_URL =
   "https://th.bing.com/th/id/OIP.1vPuKW06mnXzD7W--g2bVwHaHa?w=185&h=185&c=7&r=0&o=5&pid=1.7";
 
 // ---------------- READY ----------------
 client.once('ready', () => {
-  console.log(`✅ Logged in as ${client.user.tag}`);
+  console.log(`Logged in as ${client.user.tag}`);
 });
 
-// ---------------- MEMBER JOIN ----------------
-client.on('guildMemberAdd', async (member) => {
-  try {
-    await axios.post(WEBHOOK_URL, {
-      username: "Anarchy Command",
-      embeds: [
-        {
-          title: "🟢 RECRUIT ENLISTED",
-          description:
-            "**NEW ENLISTMENT CONFIRMED**\n\n" +
-            "👤 Soldier: <@" + member.id + ">\n" +
-            "📥 Status: Active Recruit\n\n" +
-            "📍 Assignment: <#" + FORCES_CHANNEL_ID + ">\n\n" +
-            "**Welcome to the ranks. Discipline is strength.**",
-          color: 0x57f287,
-          image: { url: IMAGE_URL }
-        }
-      ]
-    });
-
-  } catch (err) {
-    console.error("Join error:", err);
-  }
-});
-
-// ---------------- ROLE UPDATE ----------------
+// ---------------- ROLE ADDED / REMOVED ----------------
 client.on('guildMemberUpdate', async (oldMember, newMember) => {
   try {
     const hadRole = oldMember.roles.cache.has(ROLE_ID);
     const hasRole = newMember.roles.cache.has(ROLE_ID);
 
-    // ROLE ADDED
+    // 🟢 ROLE ADDED
     if (!hadRole && hasRole) {
+      console.log("ROLE ADDED");
+
       await axios.post(WEBHOOK_URL, {
         username: "Anarchy Command",
         embeds: [
@@ -81,7 +57,6 @@ client.on('guildMemberUpdate', async (oldMember, newMember) => {
               "**NEW ENLISTMENT CONFIRMED**\n\n" +
               "👤 Soldier: <@" + newMember.id + ">\n" +
               "📥 Status: Active Recruit\n\n" +
-              "📍 Assignment: <#" + FORCES_CHANNEL_ID + ">\n\n" +
               "**Welcome to the ranks. Discipline is strength.**",
             color: 0x57f287,
             image: { url: IMAGE_URL }
@@ -90,8 +65,10 @@ client.on('guildMemberUpdate', async (oldMember, newMember) => {
       });
     }
 
-    // ROLE REMOVED
+    // 🔴 ROLE REMOVED
     if (hadRole && !hasRole) {
+      console.log("ROLE REMOVED");
+
       await axios.post(WEBHOOK_URL, {
         username: "Anarchy Command",
         embeds: [
