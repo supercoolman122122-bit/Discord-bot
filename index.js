@@ -25,8 +25,8 @@ const client = new Client({
   ]
 });
 
-// 🔧 SETTINGS
-const WEBHOOK_URL = "https://discord.com/api/webhooks/1493016172520804362/wpwS7KQhrhQYJfsH4dPRwjPQi6l6rnlPbQckMrPZUKn9Ogau06JriociHte_CCqqn7iK";
+// ---------------- SETTINGS ----------------
+const WEBHOOK_URL = https://discord.com/api/webhooks/1493016172520804362/wpwS7KQhrhQYJfsH4dPRwjPQi6l6rnlPbQckMrPZUKn9Ogau06JriociHte_CCqqn7iK;
 const ROLE_ID = "1490119562853617795";
 const FORCES_CHANNEL_ID = "1490116444296314991";
 
@@ -35,16 +35,43 @@ const IMAGE_URL =
   "https://th.bing.com/th/id/OIP.1vPuKW06mnXzD7W--g2bVwHaHa?w=185&h=185&c=7&r=0&o=5&pid=1.7";
 
 // ---------------- READY ----------------
-client.on('ready', () => {
+client.once('ready', () => {
   console.log(`Logged in as ${client.user.tag}`);
 });
 
-// ---------------- ROLE SYSTEM ----------------
+// ---------------- MEMBER JOIN ----------------
+client.on('guildMemberAdd', async (member) => {
+  try {
+    console.log("MEMBER JOINED");
+
+    await axios.post(WEBHOOK_URL, {
+      username: "Anarchy Command",
+      embeds: [
+        {
+          title: "🟢 RECRUIT ENLISTED",
+          description:
+            "**NEW ENLISTMENT CONFIRMED**\n\n" +
+            "👤 **Soldier:** <@" + member.id + ">\n" +
+            "📥 **Status:** Active Recruit\n\n" +
+            "📍 **Assignment:** Awaiting verification in <#" + FORCES_CHANNEL_ID + ">\n\n" +
+            "**Welcome to the ranks. Discipline is strength.**",
+          color: 0x57f287,
+
+          image: {
+            url: IMAGE_URL
+          }
+        }
+      ]
+    });
+
+  } catch (err) {
+    console.error("Join error:", err);
+  }
+});
+
+// ---------------- ROLE CHANGE ----------------
 client.on('guildMemberUpdate', async (oldMember, newMember) => {
   try {
-    await oldMember.fetch();
-    await newMember.fetch();
-
     const hadRole = oldMember.roles.cache.has(ROLE_ID);
     const hasRole = newMember.roles.cache.has(ROLE_ID);
 
@@ -54,7 +81,6 @@ client.on('guildMemberUpdate', async (oldMember, newMember) => {
 
       await axios.post(WEBHOOK_URL, {
         username: "Anarchy Command",
-        content: `<@${newMember.id}>`,
         embeds: [
           {
             title: "🟢 RECRUIT ENLISTED",
@@ -68,10 +94,6 @@ client.on('guildMemberUpdate', async (oldMember, newMember) => {
 
             image: {
               url: IMAGE_URL
-            },
-
-            footer: {
-              text: "Anarchy Forces Command"
             }
           }
         ]
@@ -96,10 +118,6 @@ client.on('guildMemberUpdate', async (oldMember, newMember) => {
 
             image: {
               url: IMAGE_URL
-            },
-
-            footer: {
-              text: "Anarchy Forces Command"
             }
           }
         ]
